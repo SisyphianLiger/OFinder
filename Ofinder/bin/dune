@@ -1,0 +1,4 @@
+(executable
+ (public_name Ofinder)
+ (name main)
+ (libraries lib))
