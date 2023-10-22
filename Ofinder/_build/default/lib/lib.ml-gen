@@ -2,3 +2,6 @@
 
 (** @canonical Lib.Hello *)
 module Hello = Lib__Hello
+
+(** @canonical Lib.Levenshtein *)
+module Levenshtein = Lib__Levenshtein

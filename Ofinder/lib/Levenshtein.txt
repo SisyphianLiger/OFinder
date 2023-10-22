@@ -1,0 +1,135 @@
+(* 
+    Levenshtein Distance: a Number that tells you how different two strings
+    are. The higher the number, the more different the two strings are. 
+
+    EXAMPLE:
+
+        The distance is 3 (3 edits)
+
+        kitten
+
+        sitting
+
+        Replace:
+        1. kitten ->       sitten (substitution of "s" for "k")
+
+        Replace
+        2. sitten ->       sittin (substitution of "i" for "e")
+
+        insertion
+        3. sittin ->       sitting (inserstion of "g" at the end)
+
+        An "edit" is defined by either an insertion of a character, 
+        a delition of a caracter, or a replacement
+
+
+        Piecewise Functions:
+
+            Functions where the directions change based on the input:
+           
+
+                        | max(i,j)                                   if min(i,j) = 0
+                        |
+                        |     | lev a,b(i - 1, j) + 1
+        lev a,b (i,j) = | min | lev a,b(i, j - 1) + 1
+                        |     | lev a,b(i - 1, j - 1) + 1(Ai != Bj)  Otherwise
+                        |
+
+
+        a == string #1
+        b == string #2
+        i = terminal char pos of a 
+        j = terminal char pos of b 
+
+               pos
+             1   2   3
+        a =  C   A   T
+        b =  C   A   P
+
+        lev a,b (1, 1) = 0              --> No edits req "c" == "c"
+        lev a,b (2, 2) = 0              --> No edits req "ca" == "ca"
+        lev a,b (1, 1) = 1              --> Edit req: Replace  "t" with "p" 
+                                                           or  "p" with "t"
+        
+        (Ai != Bj) 
+        Ai refers to the char of str at pos i 
+        Bj refers to the char of a str at pos j
+
+        We make sure it is not equal, because if it is then no edit is needed. 
+        And we should not add 1, but if they are diff we should add 1
+
+        Solve with a Matrix:
+
+            str a = sitting 
+            str b = kitten 
+
+          # K  I  T  T  E  N
+        # 0 1  2  3  4  5  6
+        S 1
+        I 2
+        T 3
+        T 4
+        I 5
+        N 6
+        G 7
+
+
+        Step 1 start from 1,1 and apply the function:
+        i = 1, j = 1
+            S != K --> Apply Min()
+                 1  --> lev a,b (0,1) + 1 = 1 + 1  ==> 2
+                 1  --> lev a,b (1,0) + 1 = 1 + 1  ==> 2
+                 0  --> lev a,b (0,0) + 1 = 0 + 1  ==> 1
+            Min == 1
+
+            
+          # K  I  T  T  E  N
+        # 0 1  2  3  4  5  6
+        S 1 1
+        I 2
+        T 3
+        T 4
+        I 5
+        N 6
+        G 7
+
+        Step 2 Go to 1,2 and apply the function:
+        i = 1, j = 2
+            S != I --> Apply Min()
+                   --> lev a,b (0,2) + 1 = 2 + 1  ==> 3
+                   --> lev a,b (1,1) + 1 = 1 + 1  ==> 2
+                   --> lev a,b (0,1) + 1 = 1 + 1  ==> 2
+            Min == 2
+
+
+          # K I T T E N
+        # 0 1 2 3 4 5 6
+        S 1 1 2
+        I 2
+        T 3
+        T 4
+        I 5
+        N 6
+        G 7
+
+
+        Step 3 Go to 1,3 and apply the function:
+            S != I --> Apply Min(1, 3)
+                   --> lev a,b (0,3) + 1 = 3 + 1  ==> 4
+                   --> lev a,b (1,2) + 1 = 2 + 1  ==> 3
+                   --> lev a,b (0,2) + 1 = 2 + 1  ==> 3
+            Min == 3
+
+
+          # K I T T E N
+        # 0 1 2 3 4 5 6
+        S 1 1 2 3 4 5 6
+        I 2 2 1 2 3 4 5
+        T 3 3 2 1 2 3 4
+        T 4 4 3 2 1 2 3
+        I 5 5 4 3 2 2 3
+        N 6 6 5 4 3 3 2 
+        G 7 7 6 5 4 4 3
+
+        The lower right corner shows that kitten and sitting distance is 3
+        
