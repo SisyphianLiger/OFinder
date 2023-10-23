@@ -1,1 +1,1 @@
-lib/Ls.ml: Array
+lib/Ls.ml: Array String

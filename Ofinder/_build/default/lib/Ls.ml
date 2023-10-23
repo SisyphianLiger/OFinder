@@ -9,3 +9,5 @@ let print_matrix m =
                (fun elem -> print_int elem; print_string " ") row;
                 print_newline ()) m
 
+(* Getting the str length for the Algorithm *)
+let str_len str = String.length str
