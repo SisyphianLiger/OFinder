@@ -12,3 +12,8 @@ let%test "2D Matrices are the Same" =
 let%test "Length of String is Accurate" = 
     let x = "Hello World" in
     Int.equal (str_len x) 11;;
+
+let%test "Testing that str_len and make_str_matrix work" = 
+    let std_matrix = Array.make_matrix ~dimx:3 ~dimy:3 0 in
+    let my_matrix = make_str_matrix (str_len "lol") (str_len "lol") in 
+    Array.equal (Array.equal Int.equal) std_matrix my_matrix
