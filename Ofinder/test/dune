@@ -1,2 +1,7 @@
-(test
- (name Ofinder))
+(library
+ (name Ofinder)
+ (libraries base stdio lib)
+ (inline_tests)
+  (preprocess (pps ppx_inline_test)))
+             
+

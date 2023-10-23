@@ -7,9 +7,9 @@
 (source
  (github username/reponame))
 
-(authors "Author Name")
+(authors "Ryan Williams")
 
-(maintainers "Maintainer Name")
+(maintainers "Ryan Williams")
 
 (license LICENSE)
 
@@ -19,7 +19,7 @@
  (name Ofinder)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune base stdio inline_tests ppx_inline_test)
  (tags
   (topics "to describe" your project)))
 
