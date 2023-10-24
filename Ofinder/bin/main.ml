@@ -1,6 +1,9 @@
-open Lib
+open Lib.Ls
 
-let two_d_arr = Ls.make_str_matrix 10 10;;
 
-Ls.print_matrix two_d_arr
+let lol = "lol"
+let lul = "lol"
 
+
+let x = make_str_matrix lol lul;;
+print_matrix x;;
