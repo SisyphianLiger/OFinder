@@ -34,15 +34,20 @@ let%test "2D Matrix is initialized" =
 
 
 (* Test from example on webpage *)
-(* let%test "Testing LS Distance" =  *)
-(*     let str_a = "sitting" in *)
-(*     let str_b = "kitten" in *)
-(*     let m = make_str_matrix str_a str_b in  *)
-(*     let m_cmp = [|  [|1; 2; 3; 4; 5; 6|];  *)
-(*                     [|1; 2; 3; 4; 5; 6|]; *)
-(*                     [|1; 2; 3; 4; 5; 6|]; *)
-(*                     [|1; 2; 3; 4; 5; 6|]; *)
-(*                     [|1; 2; 3; 4; 5; 6|]; *)
-(*                     [|1; 2; 3; 4; 5; 6|]; *)
-(*                     |] *)
-(**)
+let%test "Testing LS Distance" = 
+    let str_a = "sitting" in
+    let str_b = "kitten" in
+    let m = make_str_matrix str_a str_b in 
+    let m_cmp = [|  [|1; 2; 3; 4; 5; 6|]; 
+                    [|2; 1; 2; 3; 4; 5|];
+                    [|3; 2; 1; 2; 3; 4|];
+                    [|4; 3; 2; 1; 2; 3|];
+                    [|5; 4; 3; 2; 2; 3|];
+                    [|6; 5; 4; 3; 3; 2|];
+                    [|7; 6; 5; 4; 4; 3|];
+                |] in
+    let () = print_matrix m in
+    let () = Stdio.print_endline "" in
+    let () = print_matrix  m_cmp in
+    Array.equal (Array.equal Int.equal) m m_cmp
+
