@@ -13,15 +13,19 @@ let str_len str = String.length str
 
 
 
-    (* Find Min *)
+(* Find Min *)
 let find_min x y z = 
     Int.min x (Int.min y z)
 
+(* Following Instructions:
+    check the deletions  (i-1)(j)
+    check the insertions (i)(j-1)
+    check the substitutions (i-1)(j-1)
 
+    One Caveat is if the chars == eachother then we return 0 else 1 
+    for the substitution value
+*)
 let lsd_calc_min m i j x_str y_str =
-    (* let x_ss = (String.sub x_str 0 i) in *)
-    (* let y_ss = (String.sub y_str 0 j) in *)
-    (* let cmp = String.compare x_ss y_ss in *)
     let x_chr = String.get x_str (i-1) in
     let y_chr = String.get y_str (j-1) in
     let del = m.(i-1).(j) + 1 in
@@ -29,7 +33,7 @@ let lsd_calc_min m i j x_str y_str =
     let sub = m.(i-1).(j-1) + if x_chr = y_chr then 0 else 1 in
     find_min del ins sub 
 
-    (* m.(i).(j) <- find_min left top cur;; *)
+(* This is the iterator for the points in the matrix from (1,1) to (n,m)   *)
 let rec map_calc_min m i j x_str y_str =
     if i <= String.length x_str  then
         if j <= String.length y_str  then
@@ -43,7 +47,7 @@ let rec map_calc_min m i j x_str y_str =
         ()
         
 
-(* Generates a 2D Array: Functional *)
+(* Generates a 2D Array: With all i = 0 and j = 0 sides initialized*)
 let make_str_matrix x_str y_str = 
     let x_str_len = str_len (" " ^  x_str) in 
     let y_str_len = str_len (" " ^ y_str) in
