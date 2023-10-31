@@ -14,9 +14,9 @@ let%test "Testing LS Distance sitting/kitten" =
                     [|6; 6; 5; 4; 3; 3; 2|];
                     [|7; 7; 6; 5; 4; 4; 3|];
                 |] in
-    let () = print_matrix m in
-    let () = Stdio.print_endline "" in
-    let () = print_matrix  m_cmp in
+    (* let () = print_matrix m in *)
+    (* let () = Stdio.print_endline "" in *)
+    (* let () = print_matrix  m_cmp in *)
     Array.equal (Array.equal Int.equal) m m_cmp
 
 
@@ -33,9 +33,9 @@ let%test "Testing LS Distance Saturday/Sunday" =
                     [|5; 4; 3; 4; 4; 4; 4; 3; 4|];
                     [|6; 5; 4; 4; 5; 5; 5; 4; 3|];
                     |] in
-    Stdio.print_endline "" ;
-    let () = print_matrix m in
-    let () = Stdio.print_endline "" in
-    let () = print_matrix  m_cmp in
+    (* Stdio.print_endline "" ; *)
+    (* let () = print_matrix m in *)
+    (* let () = Stdio.print_endline "" in *)
+    (* let () = print_matrix  m_cmp in *)
     Array.equal (Array.equal Int.equal) m m_cmp
 
