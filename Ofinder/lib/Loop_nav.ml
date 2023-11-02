@@ -9,14 +9,17 @@
     to true terminating the loop
 
  *)
+let string_test = "/test/string/input/here/match/"
+
 let start_file_loop () = 
     let file_loop = ref false in 
     print_endline "";
     while not !file_loop do 
-        print_string "Please enter q to quit"; print_endline "";
+        print_string string_test; print_endline "";
         let str = read_line () in 
-        match Some(str.[0]) with 
-        | Some('q') -> file_loop := true 
+        match Some(str) with 
+        | Some("q") -> file_loop := true 
+        | Some(_) -> file_loop := false
         | _ -> file_loop := false
     done;
 

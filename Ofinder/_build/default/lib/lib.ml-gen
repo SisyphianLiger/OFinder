@@ -8,3 +8,6 @@ module Loop_nav = Lib__Loop_nav
 
 (** @canonical Lib.Ls *)
 module Ls = Lib__Ls
+
+(** @canonical Lib.Match_str *)
+module Match_str = Lib__Match_str
