@@ -41,20 +41,17 @@ let%test "Testing LS Distance Saturday/Sunday" =
     Array.equal (Array.equal Int.equal) m m_cmp
 
 
-(* let%test "Testing Match String match" =  *)
-(*     let str_a = "Sunday" in *)
-(*     let str_b = "Sun" in *)
-(*     let res = my_match_str str_a str_b in  *)
-(*     let find_res res =  *)
-(*         match res with *)
-(*         | Some(_) -> 1 *)
-(*         | None -> 0 *)
-(*     in *)
-(*     Int.equal (find_res res) 1 *)
-
-let%test "Testing Correct string match" = 
+let%test "Testing Match String match" = 
     let str_a = "Sunday" in
     let str_b = "Sun" in
-    let res = match_str str_a str_b in 
-    Bool.equal res true
+    let res = my_match_str str_a str_b in 
+    let find_res res = 
+        match res with
+        | Some(r) -> r
+        | None -> ""
+    in
+    let m = "Match Found: ||Sun||day" in 
+    String.equal m (find_res res)
+
+
 

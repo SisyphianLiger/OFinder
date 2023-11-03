@@ -25,7 +25,6 @@ let my_match_str str_a str_b =
                                     chcker (acc + 1) str_a str_b
                                 else
                                     let highlighted = str_b in 
-                                    let () = Printf.printf "len_b is %i len_a is %i len is %i acc is %i" len_b len_a len acc in
                                     Some("Match Found: " ^ "||" ^ highlighted ^"||" ^ (String.sub str_a len (len_a - len)))
 
     in
