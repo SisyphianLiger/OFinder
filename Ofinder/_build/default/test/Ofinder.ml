@@ -50,8 +50,19 @@ let%test "Testing Match String match" =
         | Some(r) -> r
         | None -> ""
     in
-    let m = "Match Found: ||Sun||day" in 
+    let m = "||Sun||day" in 
     String.equal m (find_res res)
 
 
+let%test "Testing Match String match" = 
+    let str_a = "Sunday" in
+    let str_b = "day" in
+    let res = my_match_str str_a str_b in 
+    let find_res res = 
+        match res with
+        | Some(r) -> r
+        | None -> ""
+    in
+    let m = "Sun||day||" in 
+    String.equal m (find_res res)
 

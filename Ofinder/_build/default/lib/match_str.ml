@@ -25,7 +25,10 @@ let my_match_str str_a str_b =
                                     chcker (acc + 1) str_a str_b
                                 else
                                     let highlighted = str_b in 
-                                    Some("Match Found: " ^ "||" ^ highlighted ^"||" ^ (String.sub str_a len (len_a - len)))
+                                    Some((String.sub str_a 0 acc)
+                                    ^ "||" ^ highlighted ^"||" 
+                                    ^ (String.sub str_a (acc + len_b)  
+                                                        (len_a - len_b - acc)))
 
     in
     chcker 0 str_a str_b

@@ -17,5 +17,8 @@ let upack r =
     | Some(r) -> r 
     | None -> ""
 let () = Printf.printf "The match is %s" (upack res)
+let _ = print_endline ""
+let res2 = my_match_str "Sunday" "day"
+let () = Printf.printf "The match is %s" (upack res2)
 
 (* let () = start_file_loop ()  *)
