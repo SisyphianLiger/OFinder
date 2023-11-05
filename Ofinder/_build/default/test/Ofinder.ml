@@ -15,8 +15,7 @@ let%test "Testing LS Distance sitting/kitten" =
                     [|6; 6; 5; 4; 3; 3; 2|];
                     [|7; 7; 6; 5; 4; 4; 3|];
                 |] in
-    (* let () = print_matrix m in *)
-    (* let () = Stdio.print_endline "" in *)
+    (* let () = print_matrix m in *) (* let () = Stdio.print_endline "" in *)
     (* let () = print_matrix  m_cmp in *)
     Array.equal (Array.equal Int.equal) m m_cmp
 
@@ -41,7 +40,7 @@ let%test "Testing LS Distance Saturday/Sunday" =
     Array.equal (Array.equal Int.equal) m m_cmp
 
 
-let%test "Testing Match String match" = 
+let%test "Testing Match String Front" = 
     let str_a = "Sunday" in
     let str_b = "Sun" in
     let res = my_match_str str_a str_b in 
@@ -54,7 +53,7 @@ let%test "Testing Match String match" =
     String.equal m (find_res res)
 
 
-let%test "Testing Match String match" = 
+let%test "Testing Match String End" = 
     let str_a = "Sunday" in
     let str_b = "day" in
     let res = my_match_str str_a str_b in 
@@ -64,5 +63,18 @@ let%test "Testing Match String match" =
         | None -> ""
     in
     let m = "Sun||day||" in 
+    String.equal m (find_res res)
+
+
+let%test "Testing No Match String" = 
+    let str_a = "Sunday" in
+    let str_b = "lol" in
+    let res = my_match_str str_a str_b in 
+    let find_res res = 
+        match res with
+        | Some(r) -> r
+        | None -> ""
+    in
+    let m = "" in 
     String.equal m (find_res res)
 

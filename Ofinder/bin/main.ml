@@ -20,5 +20,8 @@ let () = Printf.printf "The match is %s" (upack res)
 let _ = print_endline ""
 let res2 = my_match_str "Sunday" "day"
 let () = Printf.printf "The match is %s" (upack res2)
+let _ = print_endline ""
+let res3 = my_match_str "Sunday" "lol"
+let () = Printf.printf "The match is %s" (upack res3)
 
 (* let () = start_file_loop ()  *)
