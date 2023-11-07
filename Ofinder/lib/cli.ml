@@ -38,7 +38,7 @@ let get_env_loc s = Sys.getenv_opt s
 
 
 let start_desktop_path () = change_dir "/Users/ryanmac/Desktop/"
-let test_path path = change_dir path
+let start_path path = change_dir path
 
 
 
@@ -48,14 +48,14 @@ let list_of_fd path =
 
 
 (*  
-    Path will be used as the first cd 
+    We use Path to change the directory if with test_path
     Then we will recursively loop through all files with the 
     root file name from path + the new extension
     And store them into a string list for processing
  *)
 
 let rec find_fdl path = 
-    test_path path;
+    start_path path;
     let dir_fd = list_of_fd path in
     match dir_fd with 
     | Error m -> [m]
