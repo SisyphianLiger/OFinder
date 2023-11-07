@@ -3,9 +3,6 @@
 (** @canonical Lib.Cli *)
 module Cli = Lib__Cli
 
-(** @canonical Lib.List_fd *)
-module List_fd = Lib__List_fd
-
 (** @canonical Lib.Loop_nav *)
 module Loop_nav = Lib__Loop_nav
 
