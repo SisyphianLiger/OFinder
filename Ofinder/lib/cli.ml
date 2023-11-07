@@ -40,11 +40,11 @@ let get_env_loc s = Sys.getenv_opt s
 let start_desktop_path () = change_dir "/Users/ryanmac/Desktop/"
 let test_path path = change_dir path
 
+
+
 let list_of_fd path = 
     try Ok(Sys.readdir path |> Array.to_list)
     with Sys_error msg -> Error msg
-
-
 
 
 (*  
@@ -64,7 +64,7 @@ let rec find_fdl path =
                 match xs with 
                 | []        -> acc 
                 | x::xs     ->  let is_dir = 
-                                    try Sys.is_directory x 
+                                    try Sys.is_directory (path ^ "/" ^ x)
                                     with Sys_error _ -> false 
                                 in
                                 if is_dir then 
