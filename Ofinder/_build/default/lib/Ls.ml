@@ -58,4 +58,4 @@ let make_str_matrix x_str y_str =
         then j + i 
                 else 0)) in  
     map_calc_min m 1 1 x_str y_str;
-    m
+    m.(x_str_len - 1).(y_str_len - 1)

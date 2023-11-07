@@ -2,7 +2,7 @@ open Base
 open Lib.Ls
 open Lib.Match_str
 
-let%test "Testing LS Distance sitting/kitten" = 
+let%test "Testing LS Distance sitting/kitten OUTOFBOUNDS??" = 
     let str_a = "sitting" in
     let str_b = "kitten" in
     let m = make_str_matrix str_a str_b in 
@@ -17,11 +17,10 @@ let%test "Testing LS Distance sitting/kitten" =
                 |] in
     (* let () = print_matrix m in *) (* let () = Stdio.print_endline "" in *)
     (* let () = print_matrix  m_cmp in *)
-    Array.equal (Array.equal Int.equal) m m_cmp
+    Int.equal m_cmp.((String.length str_b) - 1).((String.length str_a) - 1) m
 
 
-
-let%test "Testing LS Distance Saturday/Sunday" = 
+let%test "Testing LS Distance Saturday/Sunday NEWTEST" = 
     let str_a = "Sunday" in
     let str_b = "Saturday" in
     let m = make_str_matrix str_a str_b in 
@@ -37,10 +36,10 @@ let%test "Testing LS Distance Saturday/Sunday" =
     (* let () = print_matrix m in *)
     (* let () = Stdio.print_endline "" in *)
     (* let () = print_matrix  m_cmp in *)
-    Array.equal (Array.equal Int.equal) m m_cmp
+    Int.equal m_cmp.(String.length str_a - 1).(String.length str_b - 1) m
 
 
-let%test "Testing Match String Front" = 
+let%test "Testing Match String match" = 
     let str_a = "Sunday" in
     let str_b = "Sun" in
     let res = my_match_str str_a str_b in 
@@ -53,7 +52,7 @@ let%test "Testing Match String Front" =
     String.equal m (find_res res)
 
 
-let%test "Testing Match String End" = 
+let%test "Testing Match String match" = 
     let str_a = "Sunday" in
     let str_b = "day" in
     let res = my_match_str str_a str_b in 

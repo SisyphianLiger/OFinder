@@ -1,3 +1,5 @@
+
+
 (*  
         In order to search through the files or directories, 
         the following type is created.
@@ -14,8 +16,8 @@
 type f_d_info = 
     { file_or_dir : int;
       fd_str : string;
-      sub_str_pnt: int * int;
-      ls_score: int
+      mutable sub_str_pnt: int * int;
+      mutable ls_score: int
     }
 
 
