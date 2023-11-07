@@ -15,8 +15,6 @@ let%test "Testing LS Distance sitting/kitten OUTOFBOUNDS??" =
                     [|6; 6; 5; 4; 3; 3; 2|];
                     [|7; 7; 6; 5; 4; 4; 3|];
                 |] in
-    (* let () = print_matrix m in *) (* let () = Stdio.print_endline "" in *)
-    (* let () = print_matrix  m_cmp in *)
     Int.equal m_cmp.((String.length str_b) - 1).((String.length str_a) - 1) m
 
 
@@ -32,10 +30,6 @@ let%test "Testing LS Distance Saturday/Sunday NEWTEST" =
                     [|5; 4; 3; 4; 4; 4; 4; 3; 4|];
                     [|6; 5; 4; 4; 5; 5; 5; 4; 3|];
                     |] in
-    (* Stdio.print_endline "" ; *)
-    (* let () = print_matrix m in *)
-    (* let () = Stdio.print_endline "" in *)
-    (* let () = print_matrix  m_cmp in *)
     Int.equal m_cmp.(String.length str_a - 1).(String.length str_b - 1) m
 
 

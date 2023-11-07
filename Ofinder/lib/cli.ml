@@ -1,5 +1,3 @@
-
-
 (*  
         In order to search through the files or directories, 
         the following type is created.
@@ -16,8 +14,8 @@
 type f_d_info = 
     { file_or_dir : int;
       fd_str : string;
-      mutable sub_str_pnt: int * int;
-      mutable ls_score: int
+      mutable sub_str_pnt: (int * int) option;
+      mutable ls_score: int option
     }
 
 
@@ -60,7 +58,7 @@ let rec find_fdl path =
     start_path path;
     let dir_fd = list_of_fd path in
     match dir_fd with 
-    | Error m -> [m]
+    | Error _ -> []
     | Ok xs ->  
             let rec add_path path xs acc  =
                 match xs with 
@@ -71,9 +69,22 @@ let rec find_fdl path =
                                 in
                                 if is_dir then 
                                     let new_dir = find_fdl (path ^ "/" ^ x) in
-                                    add_path path xs (new_dir @ acc);
+                                    let f_d_info = {
+                                        file_or_dir = 1;
+                                        fd_str = path ^"/" ^x;
+                                        sub_str_pnt = None;
+                                        ls_score = None;
+                                    } in
+
+                                    add_path path xs (f_d_info::new_dir @ acc);
                                 else 
-                                    add_path path xs (( path ^"/" ^x)::acc) 
+                                    let f_d_info = {
+                                        file_or_dir = 0;
+                                        fd_str = path ^"/" ^x;
+                                        sub_str_pnt = None;
+                                        ls_score = None;
+                                    } in
+                                    add_path path xs (f_d_info::acc) 
             in 
             add_path path xs []
     
