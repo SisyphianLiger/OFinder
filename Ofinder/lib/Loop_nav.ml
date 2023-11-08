@@ -1,3 +1,4 @@
+open Curses
 (* Take in Input 
     From Ocaml.org docs 
     While loops are useful with references
@@ -17,18 +18,47 @@
     and the algorithms would be applied to an increasingly 
     longer string, just as you intended.
 
+
  *)
-let string_test = "/test/string/input/here/match/"
+
+
+let test_curses () =
+    let win = initscr () in
+    let _ = waddstr win "Hello, curses!" in
+    let _ = wrefresh win in
+    Unix.sleep 2;  (* Pause for 2 seconds *)
+    endwin ()
+
+let update s ns = s ^ ns
 
 let start_file_loop () = 
+    (* Initialize curses *)
+    let win = initscr () in
+
+    (* Initialize keypad listening *)
+    let _ = keypad win true in
+
+    (* Disable echo of input characters *)
+    let _ = noecho () in  
+
+    (* Initialize s_input and while loop*)
+    let s_input = ref "" in
     let file_loop = ref false in 
-    print_endline "";
+    let key_backspace = 127 in 
+    let key_escape = 27 in
+
     while not !file_loop do 
-        print_string string_test; print_endline "";
-        let str = read_line () in 
-        match Some(str) with 
-        | Some("q") -> file_loop := true 
-        | Some(_) -> file_loop := false
-        | _ -> file_loop := false
+        let key = getch () in 
+        match key with 
+        | key when key = key_backspace -> if String.length !s_input > 0 then
+                            s_input := String.sub !s_input 0 (String.length !s_input - 1)
+        | key when key = key_escape -> file_loop := true
+
+        | _ ->  s_input := !s_input  ^ Char.escaped (Char.chr key);
     done;
+
+    let _ = waddstr win !s_input in
+    let _ = wrefresh win in
+
+    endwin ()
 

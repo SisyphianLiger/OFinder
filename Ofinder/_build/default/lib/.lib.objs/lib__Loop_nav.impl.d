@@ -1,1 +1,1 @@
-lib/Loop_nav.ml:
+lib/Loop_nav.ml: Char Curses String Unix
