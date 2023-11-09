@@ -8,7 +8,4 @@ open Lib.Loop_nav
 (* let () = List.iter (fun fd -> print_endline (string_of_int fd.file_or_dir)) res *)
 
 
-
-
-
-let () = start_file_loop () 
+let () = draw_box (0, 0) (10, 10)

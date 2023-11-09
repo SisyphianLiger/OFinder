@@ -1,1 +1,1 @@
-lib/Loop_nav.ml: Char Curses String Unix
+lib/Loop_nav.ml: ANSITerminal Printf
