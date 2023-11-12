@@ -7,5 +7,9 @@ open Lib.Loop_nav
 (* let res = find_fdl "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" *)
 (* let () = List.iter (fun fd -> print_endline (string_of_int fd.file_or_dir)) res *)
 
+let main () = create_color_window () 
 
-let () = draw_box (0, 0) (10, 10)
+
+
+
+let () = main ()

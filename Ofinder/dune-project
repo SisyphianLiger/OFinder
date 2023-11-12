@@ -19,7 +19,7 @@
  (name Ofinder)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ANSITerminal ocaml dune base stdio inline_tests ppx_inline_test)
+ (depends curses ocaml dune base stdio inline_tests ppx_inline_test)
  (tags
   (topics "to describe" your project)))
 

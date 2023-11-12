@@ -10,7 +10,7 @@ homepage: "https://github.com/username/reponame"
 doc: "https://url/to/documentation"
 bug-reports: "https://github.com/username/reponame/issues"
 depends: [
-  "ANSITerminal"
+  "curses"
   "ocaml"
   "dune" {>= "3.7"}
   "base"
