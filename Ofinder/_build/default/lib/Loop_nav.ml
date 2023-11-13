@@ -19,6 +19,8 @@ open Curses
     and the algorithms would be applied to an increasingly 
     longer string, just as you intended.
 
+    I have a sentence and I want to ask more questions.
+
 
  *)
 
@@ -31,6 +33,9 @@ let create_color_window () =
     let _ = noecho () in  
     let _ = start_color () in
 
+    (* Window Trial *)
+    let win = newwin 25 50 25 50 in 
+    box win (Char.code '|') (Char.code '_');
     (* Line Implementations *)
     let (maxy, maxx) = getmaxyx mainwindow in
     let _ = hline (Char.code '=') maxx in
@@ -58,6 +63,7 @@ let create_color_window () =
     let _ = mvaddstr (maxy / 3) ((maxx - 20) / 2) "Press any key to exit." in
     let _ = mvaddstr (maxy - 10) ((maxx - 20) / 2) "Press any key to exit." in
 
+    let _ = wrefresh win in 
     let _ = getch () in 
     endwin ()
 
