@@ -1,1 +1,1 @@
-lib/Loop_nav.ml: Char Curses List String
+lib/Loop_nav.ml: Char Curses String
