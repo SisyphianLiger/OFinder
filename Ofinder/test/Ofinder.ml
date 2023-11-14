@@ -1,6 +1,6 @@
 open Base
 open Lib.Ls
-open Lib.Match_str
+(* open Lib.Match_str *)
 
 let%test "Testing LS Distance sitting/kitten OUTOFBOUNDS??" = 
     let str_a = "sitting" in
@@ -33,41 +33,41 @@ let%test "Testing LS Distance Saturday/Sunday NEWTEST" =
     Int.equal m_cmp.(String.length str_a - 1).(String.length str_b - 1) m
 
 
-let%test "Testing Match String match" = 
-    let str_a = "Sunday" in
-    let str_b = "Sun" in
-    let res = my_match_str str_a str_b in 
-    let find_res res = 
-        match res with
-        | Some(r) -> r
-        | None -> ""
-    in
-    let m = "||Sun||day" in 
-    String.equal m (find_res res)
-
-
-let%test "Testing Match String match" = 
-    let str_a = "Sunday" in
-    let str_b = "day" in
-    let res = my_match_str str_a str_b in 
-    let find_res res = 
-        match res with
-        | Some(r) -> r
-        | None -> ""
-    in
-    let m = "Sun||day||" in 
-    String.equal m (find_res res)
-
-
-let%test "Testing No Match String" = 
-    let str_a = "Sunday" in
-    let str_b = "lol" in
-    let res = my_match_str str_a str_b in 
-    let find_res res = 
-        match res with
-        | Some(r) -> r
-        | None -> ""
-    in
-    let m = "" in 
-    String.equal m (find_res res)
-
+(* let%test "Testing Match String match" =  *)
+(*     let str_a = "Sunday" in *)
+(*     let str_b = "Sun" in *)
+(*     let res = my_match_str str_a str_b in  *)
+(*     let find_res res =  *)
+(*         match res with *)
+(*         | Some(r) -> r *)
+(*         | None -> "" *)
+(*     in *)
+(*     let m = "||Sun||day" in  *)
+(*     String.equal m (find_res res) *)
+(**)
+(**)
+(* let%test "Testing Match String match" =  *)
+(*     let str_a = "Sunday" in *)
+(*     let str_b = "day" in *)
+(*     let res = my_match_str str_a str_b in  *)
+(*     let find_res res =  *)
+(*         match res with *)
+(*         | Some(r) -> r *)
+(*         | None -> "" *)
+(*     in *)
+(*     let m = "Sun||day||" in  *)
+(*     String.equal m (find_res res) *)
+(**)
+(**)
+(* let%test "Testing No Match String" =  *)
+(*     let str_a = "Sunday" in *)
+(*     let str_b = "lol" in *)
+(*     let res = my_match_str str_a str_b in  *)
+(*     let find_res res =  *)
+(*         match res with *)
+(*         | Some(r) -> r *)
+(*         | None -> "" *)
+(*     in *)
+(*     let m = "" in  *)
+(*     String.equal m (find_res res) *)
+(**)

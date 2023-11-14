@@ -34,11 +34,7 @@ let my_match_str str_a str_b =
         | _               -> if str_b <> (String.sub str_a acc len_b)
                                 then matcher str_a str_b (acc + 1)
                                 else 
-                                    let highlighted = str_b in 
-                                    Some(String.sub str_a 0 acc
-                                    ^ "||" ^ highlighted ^"||" 
-                                    ^ String.sub str_a (acc + len_b)  
-                                    (len_a - len_b - acc))
+                                    Some(acc, (acc + len_b))
     in
     matcher str_a str_b 0
 

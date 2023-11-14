@@ -1,4 +1,7 @@
 open Curses
+open Cli 
+open Ls
+open Match_str
 (* Take in Input 
    u
     From Ocaml.org docs 
@@ -24,11 +27,27 @@ open Curses
 
  *)
 
+(* Print Function with upper limit *)
+
+
+
+(* Helper Function for sorting *)
+let compare_ls ls_one ls_two = 
+    match ls_one.ls_score, ls_two.ls_score with
+    | None, None -> 0
+    | Some _, None -> -1
+    | None, Some _ -> 1
+    | Some x, Some y -> compare x y
+
+
 (* attron (A.color_pair 1); *)
 (* attroff (A.color_pair 1); *)
-let create_color_window () = 
-    let mainwindow = initscr () in
-    
+let window_search path = 
+    let mainwindow = initscr () in 
+
+    (* we take this and use it to display the results *)
+    let f_d_found = find_fdl path in
+
     (* Needed to read text contiguously *)
     let _ = cbreak () in
     let _ = noecho () in  
@@ -43,12 +62,15 @@ let create_color_window () =
     let _ = refresh () in
 
     let _ = mvaddstr 1 2 "FILES OR DIRECTORIES" in
-    (* let _ = mvaddstr 3 2 "Directory/File Input" in *)
+
     let _ = mvaddstr ((maxy * 9 / 10) - 1) 2 "SEARCH TERM BOX:" in
     let _ = mvaddstr ((maxy * 9 / 10) + 1) 3 "" in
 
     let _ = wrefresh win_top in 
     let _ = wrefresh win_bot in 
+   
+    (* to display maximum amount of results *)
+    let input_range = ((maxy * 7 / 10) - 2) in
 
     let backspace = 127 in 
     let escape = 27 in
@@ -65,7 +87,19 @@ let create_color_window () =
                                             ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input);
         | key when key = escape     ->  ls_loop := false
 
-        | _ ->   s_input := !s_input  ^ Char.escaped (Char.chr key);            
+        | _  when (String.length !s_input) < (maxx - 5) ->   s_input := !s_input  ^ Char.escaped (Char.chr key);            
                  ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input);
+        | _ ->  (* Things that need to happen, populate f_d_found with the LS and Match Str *)
+                (* Output the match str *)
+                List.iter (fun x -> x.ls_score      <- Some(make_str_matrix !s_input x.fd_str);
+                                    x.sub_str_pnt   <- my_match_str x.fd_str !s_input) f_d_found;
+               
+               (* Now we sort :( *)
+                List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
+                then ignore(mvaddstr (i + 3) 2 x.fd_str));
+                let _ = wrefresh win_top in 
+                
+                (* Afterwards we print !!*)
+                ls_loop := true
     done;
     endwin ()

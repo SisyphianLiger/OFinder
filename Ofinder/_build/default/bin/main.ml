@@ -1,14 +1,12 @@
-(* open Lib.Cli *)
 open Lib.Loop_nav
-(* open Lib.Match_str *)
 (* "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/" *)
 
 
-(* let res = find_fdl "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" *)
-(* let () = List.iter (fun fd -> print_endline (string_of_int fd.file_or_dir)) res *)
-
-let main () = create_color_window () 
-
+let main () = 
+    let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in
+    (* Take res, apply ls and sub match on the record type *)
+ 
+    window_search path
 
 
 
