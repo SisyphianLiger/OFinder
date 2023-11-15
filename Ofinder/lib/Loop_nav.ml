@@ -88,16 +88,16 @@ let window_search path =
         | key when key = escape     ->  ls_loop := false
 
         | _  when (String.length !s_input) < (maxx - 5) ->   s_input := !s_input  ^ Char.escaped (Char.chr key);            
-                 ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input);
+                                                             ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input); 
+                                                            (* Output the match str *)
+                                                            List.iter (fun x -> x.ls_score      <- Some(make_str_matrix !s_input x.fd_str);
+                                                            x.sub_str_pnt   <- my_match_str x.fd_str !s_input) f_d_found;
+                                                            (* Now we sort :( *)
+                                                            List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
+                                                            then ignore(mvaddstr (i + 3) 2 x.fd_str));
+                                                            let _ = wrefresh win_top in 
+                                                            ls_loop := true
         | _ ->  (* Things that need to happen, populate f_d_found with the LS and Match Str *)
-                (* Output the match str *)
-                List.iter (fun x -> x.ls_score      <- Some(make_str_matrix !s_input x.fd_str);
-                                    x.sub_str_pnt   <- my_match_str x.fd_str !s_input) f_d_found;
-               
-               (* Now we sort :( *)
-                List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
-                then ignore(mvaddstr (i + 3) 2 x.fd_str));
-                let _ = wrefresh win_top in 
                 
                 (* Afterwards we print !!*)
                 ls_loop := true
