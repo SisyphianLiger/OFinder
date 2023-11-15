@@ -27,8 +27,11 @@ open Match_str
 
  *)
 
-(* Print Function with upper limit *)
 
+let unpacker_str x = 
+    match x with 
+    | None   -> ""
+    | Some x -> string_of_int x
 
 
 (* Helper Function for sorting *)
@@ -44,10 +47,11 @@ let compare_ls ls_one ls_two =
 (* attroff (A.color_pair 1); *)
 let window_search path = 
     let mainwindow = initscr () in 
+    let _ = colors () in
 
     (* we take this and use it to display the results *)
     let f_d_found = find_fdl path in
-
+    
     (* Needed to read text contiguously *)
     let _ = cbreak () in
     let _ = noecho () in  
@@ -85,21 +89,20 @@ let window_search path =
                                             s_input := String.sub !s_input 0 (String.length !s_input - 1);
                                             ignore(mvaddstr ((maxy * 9 / 10) + 1) 2 (String.make maxx ' '));
                                             ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input);
-        | key when key = escape     ->  ls_loop := false
+
+        | key when key = escape                         ->   ls_loop := false
 
         | _  when (String.length !s_input) < (maxx - 5) ->   s_input := !s_input  ^ Char.escaped (Char.chr key);            
                                                              ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input); 
-                                                            (* Output the match str *)
-                                                            List.iter (fun x -> x.ls_score      <- Some(make_str_matrix !s_input x.fd_str);
-                                                            x.sub_str_pnt   <- my_match_str x.fd_str !s_input) f_d_found;
-                                                            (* Now we sort :( *)
-                                                            List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
-                                                            then ignore(mvaddstr (i + 3) 2 x.fd_str));
-                                                            let _ = wrefresh win_top in 
-                                                            ls_loop := true
-        | _ ->  (* Things that need to happen, populate f_d_found with the LS and Match Str *)
-                
-                (* Afterwards we print !!*)
-                ls_loop := true
+                                                             (* Output the match str *)
+                                                             List.iter (fun x -> x.ls_score      <- Some(make_str_matrix !s_input x.fd_str);
+                                                             x.sub_str_pnt   <- my_match_str x.fd_str !s_input) f_d_found;
+                                                             (* Now we sort :( *)
+                                                             List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
+                                                             then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.ls_score) ^ " " ^  x.fd_str)));
+                                                             let _ = wrefresh win_top in 
+                                                             ls_loop := true
+
+        | _                                             ->   ls_loop := true
     done;
     endwin ()
