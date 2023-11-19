@@ -10,7 +10,7 @@ let match_str s1 s2 =
 
 
 
-let red f_str s_str = Printf.printf"\027[31m%s\027[0m\n%s" f_str s_str
+let red f_str high s_str = Printf.printf"%s\027[31m%s\027[0m\n%s" f_str high s_str
 
 let unpack l = 
     match l with

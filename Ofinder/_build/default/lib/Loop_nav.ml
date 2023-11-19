@@ -27,6 +27,21 @@ open Match_str
 
  *)
 
+(* Time to make the str_match Red *)
+let str_colorizer win str ss = 
+        match ss with
+        | None                                   ->  str
+        | Some (x,y)    ->  
+                            let tuple_one = x in 
+                            let tuple_two = y in 
+                            let str_a_len = String.length str in 
+                            let first_string = String.sub str 0 tuple_one in 
+                            let _ = waddstr win first_string in
+                            let highlighted = String.sub str tuple_one (tuple_two - tuple_one) in
+                            let _ = waddstr win highlighted in
+                            let second_string = String.sub str tuple_two (str_a_len - tuple_two) in 
+                            first_string ^ " || " ^ highlighted ^ " || " ^ second_string
+
 
 let unpacker_str x = 
     match x with 
@@ -43,8 +58,6 @@ let compare_ls ls_one ls_two =
     | Some x, Some y -> compare x y
 
 
-(* attron (A.color_pair 1); *)
-(* attroff (A.color_pair 1); *)
 let window_search path = 
     let mainwindow = initscr () in 
     let _ = colors () in
@@ -95,11 +108,15 @@ let window_search path =
         | _  when (String.length !s_input) < (maxx - 5) ->   s_input := !s_input  ^ Char.escaped (Char.chr key);            
                                                              ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input); 
                                                              (* Output the match str *)
-                                                             List.iter (fun x -> x.ls_score      <- Some(make_str_matrix !s_input x.fd_str);
-                                                             x.sub_str_pnt   <- my_match_str x.fd_str !s_input) f_d_found;
+                                                             List.iter (fun x -> x.ls_score <- Some(make_str_matrix !s_input x.fd_str);
+                                                                            x.sub_str_pnt <- my_match_str x.fd_str !s_input )f_d_found;
                                                              (* Now we sort :( *)
                                                              List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
-                                                             then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.ls_score) ^ " " ^  x.fd_str)));
+                                                             then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.ls_score) ^ " " ^  
+                                                             (str_colorizer win_top x.fd_str x.sub_str_pnt))
+
+                                                             (* Here is where we change color based on str match *)
+                                                             ));
                                                              let _ = wrefresh win_top in 
                                                              ls_loop := true
 
