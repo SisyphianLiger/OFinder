@@ -5,9 +5,9 @@ open Lib.Loop_nav
 
 
 let main () = 
-    let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in
-    
-    key_test path
-
+    let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in 
+    key_test path;
+    let _ = Sys.command "nvim ." in
+    ()
 
 let () = main ()
