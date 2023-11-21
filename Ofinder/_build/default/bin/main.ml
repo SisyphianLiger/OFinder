@@ -1,13 +1,14 @@
+(* open Lib.Cli *)
 open Lib.Loop_nav
+(* open Lib.Match_str *)
 (* "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/" *)
 
 
 let main () = 
-    let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in
-    (* Take res, apply ls and sub match on the record type *)
- 
-    window_search path
-
+    (* let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in *)
+    (* window_search path *)
+    
+    key_test ()
 
 
 let () = main ()

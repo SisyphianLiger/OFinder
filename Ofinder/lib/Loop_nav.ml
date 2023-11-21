@@ -24,19 +24,92 @@ open Match_str
 
     I have a sentence and I want to ask more questions.
 
-
  *)
+
+
+let key_test path = 
+    let main_window = initscr () in
+    let _ = keypad main_window true in (* Enable special keys reading *)
+
+    let _ = path in
+    (* we take this and use it to display the results *) 
+    (* let f_d_found = find_fdl path in *)
+    
+    (* Needed to read text contiguously *)
+    let _ = cbreak () in
+    let _ = noecho () in  
+
+    let (maxy, maxx) = getmaxyx main_window in
+    (* Window Trial *)
+    (* let win = newwin 25 50 25 50 in  *)
+    let win_top = newwin (maxy * 7 / 10) maxx 2 0 in
+    let win_bot = newwin (maxy / 10)  maxx (maxy * 9 / 10) 0  in
+    box win_top (Char.code '|') (Char.code '=');
+    box win_bot (Char.code '|') (Char.code '=');
+    let _ = refresh () in
+
+    let _ = mvaddstr 1 2 "FILES OR DIRECTORIES" in
+
+    let _ = mvaddstr ((maxy * 9 / 10) - 1) 2 "SEARCH TERM BOX:" in
+    let _ = mvaddstr ((maxy * 9 / 10) + 1) 3 "" in
+
+    let _ = wrefresh win_top in 
+    let _ = wrefresh win_bot in 
+
+
+    
+    let run_loop = ref true in
+    while !run_loop do
+        let ch = getch () in
+        match ch with
+            | key_code when key_code = 10 ->
+                    print_endline ("Enter key pressed: " ^ string_of_int ch);
+                    run_loop := true
+
+            | key_code when key_code = Key.up -> 
+                    print_endline ("Up arrow key pressed: " ^ string_of_int ch);
+                    run_loop := true
+
+            | key_code when key_code = Key.down -> 
+                    print_endline ("Down arrow key pressed: " ^ string_of_int ch);
+                    run_loop := true
+
+            | key_code when key_code = 27 -> 
+                    print_endline ("Escape key pressed: " ^ string_of_int ch);
+                   run_loop := false
+                    
+            | key_code when key_code = Key.left -> 
+                    print_endline ("Left key pressed: " ^ string_of_int ch);
+                    run_loop := true
+
+            | key_code when key_code = Key.right -> 
+                    print_endline ("Right key pressed: " ^ string_of_int ch);
+                    run_loop := true
+
+            | _ ->  print_endline ("Key pressed was " ^ string_of_int ch);
+                    run_loop := true
+    done;
+    endwin ()
+
+
+
+
+(* 
+        When I hit enter I write space number 
+ *)
+
+(* let change_to_ide str =  *)
+(*     let rec find_words str acc =  *)
+(*         let ch = String.get str acc in *)
+(*         match ch with  *)
+(*         | ch when ch = ' ' -> () *)
+(*         | _ -> () *)
+(*     find_words str 0 *)
+
 (* supposed window initialization happened before this line *)
-let print_in_red win str = 
-    let _ = start_color () in
-    let _ = init_pair 1 1 0 in (* initializing red *)
-    wattron win (A.color_pair 1); (* turning on color *)
-    ignore (waddstr win str); (* printing the string *)
-    wattroff win A.(color_pair 1); (* turning off color *)
-    refresh ()
 
 (* Time to make the str_match Red *)
-let str_colorizer win str ss = 
+let str_match_highlight win str ss = 
         let _ = colors () in
         let _ = init_pair 1 2 0 in
         match ss with
@@ -50,7 +123,7 @@ let str_colorizer win str ss =
                             let highlighted = String.sub str tuple_one (tuple_two - tuple_one) in
                             wattroff win (A.color_pair 1);
                             let second_string = String.sub str tuple_two (str_a_len - tuple_two) in 
-                            first_string ^ " ==> " ^highlighted ^ " <== " ^ second_string
+                            first_string ^ " ==> " ^ highlighted ^ " <== " ^ second_string
 
 
 let unpacker_str x = if x = 0 then "F" else "D"
@@ -67,7 +140,6 @@ let compare_ls ls_one ls_two =
 
 let window_search path = 
     let mainwindow = initscr () in 
-    let _ = colors () in
 
     (* we take this and use it to display the results *)
     let f_d_found = find_fdl path in
@@ -93,21 +165,21 @@ let window_search path =
     let _ = wrefresh win_top in 
     let _ = wrefresh win_bot in 
    
+    let _ = keypad win_bot true in 
     (* to display maximum amount of results *)
     let input_range = ((maxy * 7 / 10) - 2) in
 
     let backspace = 127 in 
     let escape = 27 in
-    let up = 65 in
-    let down = 66 in
 
 
     let ls_loop = ref true in
     let s_input = ref "" in
-    let cur_direction = ref 0 in
     while !ls_loop do 
         let key = getch () in 
         match key with 
+        | key when key = escape                         ->   ls_loop := false
+        | key when key = 10                             ->   ls_loop := false
         | key when key = backspace  ->  if String.length !s_input > 0 
                                         then 
                                             s_input := String.sub !s_input 0 (String.length !s_input - 1);
@@ -116,66 +188,23 @@ let window_search path =
                                             List.iter (fun x -> x.ls_score <- Some(make_str_matrix !s_input x.fd_str);
                                                                 x.sub_str_pnt <- my_match_str x.fd_str !s_input )f_d_found;
                                             (* Now we sort :( *)
-                                            List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
-                                            then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                            (str_colorizer win_top x.fd_str x.sub_str_pnt))));
+                                            List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range                                             then ignore(mvaddstr (input_range - i + 2) 2 (string_of_int i ^ " " ^(unpacker_str x.file_or_dir) ^ " " ^  
+                                            (str_match_highlight win_top x.fd_str x.sub_str_pnt))));
                                             let _ = wrefresh win_top in 
                                             ls_loop := true
 
-        | key when key = escape                         ->   ls_loop := false
-
-
-
-        (* Need Logic Checks with Count *)
-        | key when key = up ->  if !cur_direction <= input_range then 
-                                                             ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input); 
-                                                             (* Output the match str *)
-                                                             List.iter (fun x -> x.ls_score <- Some(make_str_matrix !s_input x.fd_str);
-                                                                            x.sub_str_pnt <- my_match_str x.fd_str !s_input )f_d_found;
-                                                             (* Now we sort :( *)
-                                                             List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range && i != !cur_direction
-                                                             then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                             (str_colorizer win_top x.fd_str x.sub_str_pnt)))
-                                                             else 
-                                                             ignore(mvaddstr (input_range - i + 2) 2 (" [ " ^(unpacker_str x.file_or_dir) ^ " " ^  
-                                                             (str_colorizer win_top x.fd_str x.sub_str_pnt) ^ " ] "))
-                                                             );
-                                                             (* Here is where we change color based on str match *)
-                                                             let _ = wrefresh win_top in 
-                                                             cur_direction := !cur_direction + 1;
-                                                             ls_loop := true
-
-        | key when key = down ->  if !cur_direction <= input_range then 
-                                                             ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input); 
-                                                             (* Output the match str *)
-                                                             List.iter (fun x -> x.ls_score <- Some(make_str_matrix !s_input x.fd_str);
-                                                                            x.sub_str_pnt <- my_match_str x.fd_str !s_input )f_d_found;
-                                                             (* Now we sort :( *)
-                                                             List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range && i != !cur_direction
-                                                             then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                             (str_colorizer win_top x.fd_str x.sub_str_pnt)))
-                                                             else 
-                                                             ignore(mvaddstr (input_range - i + 2) 2 (" [ " ^(unpacker_str x.file_or_dir) ^ " " ^  
-                                                             (str_colorizer win_top x.fd_str x.sub_str_pnt) ^ " ] "))
-                                                             );
-                                                             (* Here is where we change color based on str match *)
-                                                             let _ = wrefresh win_top in 
-                                                             cur_direction := !cur_direction - 1;
-                                                             ls_loop := true
 
 
         | _  when (String.length !s_input) < (maxx - 5) ->   s_input := !s_input  ^ Char.escaped (Char.chr key);            
                                                              ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !s_input); 
                                                              (* Output the match str *)
-                                                             List.iter (fun x -> x.ls_score <- Some(make_str_matrix !s_input x.fd_str);
+                                                             List.iter (fun x -> 
+                                                                            x.ls_score <- Some(make_str_matrix !s_input x.fd_str);
                                                                             x.sub_str_pnt <- my_match_str x.fd_str !s_input )f_d_found;
                                                              (* Now we sort :( *)
-                                                             List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
-                                                             then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                             (str_colorizer win_top x.fd_str x.sub_str_pnt))
-
-                                                             (* Here is where we change color based on str match *)
-                                                             ));
+                                                             List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range && i != 0
+                                                             then ignore(mvaddstr (input_range - i + 2) 2( string_of_int i ^ " " ^ (unpacker_str x.file_or_dir) ^ " " ^  
+                                                             (str_match_highlight win_top x.fd_str x.sub_str_pnt))));
                                                              let _ = wrefresh win_top in 
                                                              ls_loop := true
 
