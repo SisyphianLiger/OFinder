@@ -26,6 +26,33 @@ open Match_str
 
  *)
 
+let str_match_highlight win str ss = 
+        let _ = colors () in
+        let _ = init_pair 1 2 0 in
+        match ss with
+        | None                                   ->  str
+        | Some (x,y)    ->  
+                            let tuple_one = x in 
+                            let tuple_two = y in 
+                            let str_a_len = String.length str in 
+                            let first_string = String.sub str 0 tuple_one in 
+                            wattron win (A.color_pair 1);
+                            let highlighted = String.sub str tuple_one (tuple_two - tuple_one) in
+                            wattroff win (A.color_pair 1);
+                            let second_string = String.sub str tuple_two (str_a_len - tuple_two) in 
+                            first_string ^ " ==> " ^ highlighted ^ " <== " ^ second_string
+
+(* Letting user know if DIRECTORIES or FILES *)
+let unpacker_str x = if x = 0 then "F" else "D"
+
+
+(* Helper Function for sorting *)
+let compare_ls ls_one ls_two = 
+    match ls_one.ls_score, ls_two.ls_score with
+    | None, None -> 0
+    | Some _, None -> -1
+    | None, Some _ -> 1
+    | Some x, Some y -> compare x y
 
 let key_test path = 
     let main_window = initscr () in
@@ -33,15 +60,15 @@ let key_test path =
 
     let _ = path in
     (* we take this and use it to display the results *) 
-    (* let f_d_found = find_fdl path in *)
+    let f_d_found = find_fdl path in
     
     (* Needed to read text contiguously *)
     let _ = cbreak () in
     let _ = noecho () in  
 
     let (maxy, maxx) = getmaxyx main_window in
-    (* Window Trial *)
-    (* let win = newwin 25 50 25 50 in  *)
+    (* Window's Set Up *)
+
     let win_top = newwin (maxy * 7 / 10) maxx 2 0 in
     let win_bot = newwin (maxy / 10)  maxx (maxy * 9 / 10) 0  in
     box win_top (Char.code '|') (Char.code '=');
@@ -56,25 +83,64 @@ let key_test path =
     let _ = wrefresh win_top in 
     let _ = wrefresh win_bot in 
 
+    let input_range = ((maxy * 7 / 10) - 2) in
 
+    let enter = 10 in
+    let escape = 27 in
     
+    let top_index = ref 0 in
+    let search_term = ref "" in    
     let run_loop = ref true in
     while !run_loop do
         let ch = getch () in
         match ch with
-            | key_code when key_code = 10 ->
-                    print_endline ("Enter key pressed: " ^ string_of_int ch);
+            | key_code when key_code = enter ->
+                    (* Sends result string to finishing Function *)
                     run_loop := true
 
-            | key_code when key_code = Key.up -> 
-                    print_endline ("Up arrow key pressed: " ^ string_of_int ch);
-                    run_loop := true
+            | key_code when key_code = Key.up ->                    if !top_index <= input_range - 2 then top_index := !top_index + 1;
+                                                                    (* Output the match str *)
+                                                                    List.iter (fun x -> x.ls_score <- Some(make_str_matrix !search_term x.fd_str);
+                                                                                        x.sub_str_pnt <- my_match_str x.fd_str !search_term) f_d_found;
+                                                             
+                                                                    (* Now we sort *)
+                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
+                                                                    List.iteri (fun i x -> 
+                                                                            ignore(mvaddstr(input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                                (str_match_highlight win_top x.fd_str x.sub_str_pnt)^ "            "));
+                                                                            if i = !top_index then 
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                                (str_match_highlight win_top x.fd_str x.sub_str_pnt)  ^ "     <===== "))
+                                                                            else
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                                (str_match_highlight win_top x.fd_str x.sub_str_pnt)))
+                                                                    );
+                                                                    let _ = wrefresh win_top in 
+                                                                    run_loop := true
 
-            | key_code when key_code = Key.down -> 
-                    print_endline ("Down arrow key pressed: " ^ string_of_int ch);
-                    run_loop := true
 
-            | key_code when key_code = 27 -> 
+            | key_code when key_code = Key.down ->                  if !top_index > 0 then top_index := !top_index - 1;
+
+                                                                    (* Output the match str *)
+                                                                    List.iter (fun x -> x.ls_score <- Some(make_str_matrix !search_term x.fd_str);
+                                                                                        x.sub_str_pnt <- my_match_str x.fd_str !search_term) f_d_found;
+                                                             
+                                                                    (* Now we sort *)
+                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
+                                                                    List.iteri (fun i x -> 
+                                                                            ignore(mvaddstr(input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                                (str_match_highlight win_top x.fd_str x.sub_str_pnt)^ "            "));
+                                                                            if i = !top_index then 
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                                (str_match_highlight win_top x.fd_str x.sub_str_pnt)  ^ "     <===== "))
+                                                                            else
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                                (str_match_highlight win_top x.fd_str x.sub_str_pnt)))
+                                                                    );
+                                                                    let _ = wrefresh win_top in 
+                                                                    run_loop := true
+
+            | key_code when key_code = escape -> 
                     print_endline ("Escape key pressed: " ^ string_of_int ch);
                    run_loop := false
                     
@@ -86,8 +152,21 @@ let key_test path =
                     print_endline ("Right key pressed: " ^ string_of_int ch);
                     run_loop := true
 
-            | _ ->  print_endline ("Key pressed was " ^ string_of_int ch);
-                    run_loop := true
+            | _  when (String.length !search_term) < (maxx - 5) ->  search_term := !search_term  ^ Char.escaped (Char.chr ch);            
+                                                                    ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !search_term); 
+                                                                    (* Output the match str *)
+                                                                    List.iter (fun x -> x.ls_score <- Some(make_str_matrix !search_term x.fd_str);
+                                                                                        x.sub_str_pnt <- my_match_str x.fd_str !search_term) f_d_found;
+                                                             
+                                                                    (* Now we sort *)
+                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
+                                                                    List.iteri (fun i x -> if i < input_range 
+                                                                    then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
+                                                                    (str_match_highlight win_top x.fd_str x.sub_str_pnt))));
+                                                                    let _ = wrefresh win_top in 
+                                                                    run_loop := true
+
+        | _                                             ->   run_loop := true
     done;
     endwin ()
 
@@ -108,34 +187,7 @@ let key_test path =
 
 (* supposed window initialization happened before this line *)
 
-(* Time to make the str_match Red *)
-let str_match_highlight win str ss = 
-        let _ = colors () in
-        let _ = init_pair 1 2 0 in
-        match ss with
-        | None                                   ->  str
-        | Some (x,y)    ->  
-                            let tuple_one = x in 
-                            let tuple_two = y in 
-                            let str_a_len = String.length str in 
-                            let first_string = String.sub str 0 tuple_one in 
-                            wattron win (A.color_pair 1);
-                            let highlighted = String.sub str tuple_one (tuple_two - tuple_one) in
-                            wattroff win (A.color_pair 1);
-                            let second_string = String.sub str tuple_two (str_a_len - tuple_two) in 
-                            first_string ^ " ==> " ^ highlighted ^ " <== " ^ second_string
 
-
-let unpacker_str x = if x = 0 then "F" else "D"
-
-
-(* Helper Function for sorting *)
-let compare_ls ls_one ls_two = 
-    match ls_one.ls_score, ls_two.ls_score with
-    | None, None -> 0
-    | Some _, None -> -1
-    | None, Some _ -> 1
-    | Some x, Some y -> compare x y
 
 
 let window_search path = 

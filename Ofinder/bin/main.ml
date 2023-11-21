@@ -5,10 +5,9 @@ open Lib.Loop_nav
 
 
 let main () = 
-    (* let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in *)
-    (* window_search path *)
+    let path = "/Users/ryanmac/Desktop/10.BootDev_Portfolio/Ofinder/Ofinder" in
     
-    key_test ()
+    key_test path
 
 
 let () = main ()
