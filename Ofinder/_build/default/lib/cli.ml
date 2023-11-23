@@ -4,7 +4,7 @@
 
         file_or_dir: 1 if dir 0 if file 
         fd_str : string that specifies file/dir path 
-        sub_str_pnt : start of sub_str in fd_str * length remaining to end pos 
+        len_match : start of sub_str in fd_str * length remaining to end pos 
         ls_score : the value derived from Levenshitein algorithm (used for sort)
              
  *)
@@ -12,10 +12,10 @@
 
 
 type f_d_info = 
-    { file_or_dir : int;
+    { 
       fd_str : string;
-      mutable sub_str_pnt: (int * int) option;
-      mutable ls_score: int option
+      mutable len_match: int option;
+      mutable ls_score: int option;
     }
 
 
@@ -62,31 +62,25 @@ let rec find_fdl path =
     | Ok xs ->  
             let rec add_path path xs acc  =
                 match xs with 
-                | []        -> acc 
+                | []        ->  acc 
                 | x::xs     ->  let is_dir = 
                                     try Sys.is_directory (path ^ "/" ^ x)
                                     with Sys_error _ -> false 
                                 in
-                                if is_dir then 
+                                let ignore_ch = String.sub x 0 1 in
+                                if is_dir && ignore_ch <> "." && ignore_ch <> "_" && x <> "node_modules" then 
+
                                     let new_dir = find_fdl (path ^ "/" ^ x) in
+                                    
                                     let f_d_info = {
-                                        file_or_dir = 1;
-                                        fd_str = path ^"/" ^x;
-                                        sub_str_pnt = None;
+                                        fd_str = path ^ "/" ^ x;
+                                        len_match = None;
                                         ls_score = None;
                                     } in
 
                                     add_path path xs (f_d_info::new_dir @ acc);
                                 else 
-                                    let f_d_info = {
-                                        file_or_dir = 0;
-                                        fd_str = path ^"/" ^x;
-                                        sub_str_pnt = None;
-                                        ls_score = None;
-                                    } in
-                                    add_path path xs (f_d_info::acc) 
+                                    add_path path xs acc 
             in 
-            add_path path xs []
-    
+            add_path path xs []    
 
-                                              

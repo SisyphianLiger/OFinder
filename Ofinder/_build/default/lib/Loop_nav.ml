@@ -40,9 +40,17 @@ let compare_ls ls_one ls_two =
     | Some x, Some y -> compare x y
 
 
+
+let sub_ls_and_str_match ls_score len_match = 
+    match ls_score,len_match with 
+    | None, None -> None 
+    | None, Some _ -> None 
+    | Some x, None -> Some x 
+    | Some x, Some y -> Some (x - y)
+    
+
 let exit_to_nvim index list = 
     let res = (List.nth index list).fd_str in
-    Printf.printf "The place retrieved is %s \n" res;
     start_path res
 
 let key_test path = 
@@ -78,7 +86,8 @@ let key_test path =
 
     let enter = 10 in
     let escape = 27 in
-    
+    let backspace = 127 in 
+
     let top_index = ref 0 in
     let search_term = ref "" in    
     let run_loop = ref true in
@@ -92,47 +101,37 @@ let key_test path =
 
             | key_code when key_code = Key.up ->                    if !top_index <= input_range - 2 then top_index := !top_index + 1;
                                                                     (* Output the match str *)
-                                                                    List.iter (fun x -> x.ls_score <- Some(make_str_matrix !search_term x.fd_str);
-                                                                                        x.sub_str_pnt <- my_match_str x.fd_str !search_term) f_d_found;
-                                                             
-                                                                    (* Now we sort *)
+
                                                                     List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
                                                                     List.iteri (fun i x -> 
-                                                                            ignore(mvaddstr(input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                                x.fd_str ^ "            "));
+                                                                            ignore(mvaddstr(input_range - i + 2) 2 (  x.fd_str ^ "            "));
                                                                             if i = !top_index then 
-                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                                x.fd_str  ^ "     <===== "))
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 ( x.fd_str  ^ "     <===== "))
                                                                             else
-                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                                x.fd_str))
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 ( x.fd_str))
                                                                     );
                                                                     let _ = wrefresh win_top in 
+                                                                    let _ = wrefresh win_bot in 
                                                                     run_loop := true
 
 
             | key_code when key_code = Key.down ->                  if !top_index > 0 then top_index := !top_index - 1;
+ 
 
-                                                                    (* Output the match str *)
-                                                                    List.iter (fun x -> x.ls_score <- Some(make_str_matrix !search_term x.fd_str);
-                                                                                        x.sub_str_pnt <- my_match_str x.fd_str !search_term) f_d_found;
-                                                             
-                                                                    (* Now we sort *)
-                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
+                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |> 
                                                                     List.iteri (fun i x -> 
-                                                                            ignore(mvaddstr(input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                                x.fd_str ^ "            "));
+                                                                            ignore(mvaddstr(input_range - i + 2) 2 (x.fd_str ^ "            "));
                                                                             if i = !top_index then 
-                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                                x.fd_str ^ "     <===== "))
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str ^ "     <===== "))
                                                                             else
-                                                                                ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                                x.fd_str))
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str))
                                                                     );
                                                                     let _ = wrefresh win_top in 
+                                                                    let _ = wrefresh win_bot in 
                                                                     run_loop := true
 
             | key_code when key_code = escape -> 
+                   let _ = exit 0 in
                    run_loop := false
                     
             | key_code when key_code = Key.left -> 
@@ -141,18 +140,38 @@ let key_test path =
             | key_code when key_code = Key.right -> 
                     run_loop := true
 
+           | key when key = backspace  ->                         if String.length !search_term > 0 
+                                                                  then 
+                                                                    search_term := String.sub !search_term 0 (String.length !search_term - 1);
+                                                                    ignore(mvaddstr ((maxy * 9 / 10) + 1) 2 (String.make maxx ' '));
+                                                                    ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !search_term);
+                                                                    
+                                                                    List.iter (fun x -> x.len_match <- my_match_str x.fd_str !search_term;
+                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) f_d_found;
+                                                                    (* Now we sort :( *)
+                                                                    List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
+                                                                    then ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str)));
+                                                                    let _ = wrefresh win_top in 
+                                                                    let _ = wrefresh win_bot in 
+                                                                    run_loop := true
+
             | _  when (String.length !search_term) < (maxx - 5) ->  search_term := !search_term  ^ Char.escaped (Char.chr ch);            
                                                                     ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !search_term); 
                                                                     (* Output the match str *)
-                                                                    List.iter (fun x -> x.ls_score <- Some(make_str_matrix !search_term x.fd_str);
-                                                                                        x.sub_str_pnt <- my_match_str x.fd_str !search_term) f_d_found;
+                                                                    List.iter (fun x -> x.len_match <- my_match_str x.fd_str !search_term;
+                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) f_d_found;
                                                              
                                                                     (* Now we sort *)
                                                                     List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
-                                                                    List.iteri (fun i x -> if i < input_range 
-                                                                    then ignore(mvaddstr (input_range - i + 2) 2 ((unpacker_str x.file_or_dir) ^ " " ^  
-                                                                    x.fd_str ) ));
+                                                                    List.iteri (fun i x -> 
+                                                                        ignore(mvaddstr(input_range - i + 2) 2 (x.fd_str ^ "            "));
+                                                                            if i = !top_index then 
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str ^ "     <===== "))
+                                                                            else
+                                                                                ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str))
+                                                                    );
                                                                     let _ = wrefresh win_top in 
+                                                                    let _ = wrefresh win_bot in 
                                                                     run_loop := true
 
         | _                                             ->   run_loop := true

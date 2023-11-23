@@ -11,6 +11,3 @@ module Ls = Lib__Ls
 
 (** @canonical Lib.Match_str *)
 module Match_str = Lib__Match_str
-
-(** @canonical Lib.Monad_sort *)
-module Monad_sort = Lib__Monad_sort

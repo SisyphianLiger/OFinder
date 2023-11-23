@@ -1,8 +1,0 @@
-lib: [
-  "_build/install/default/lib/Ofinder/META"
-  "_build/install/default/lib/Ofinder/dune-package"
-  "_build/install/default/lib/Ofinder/opam"
-]
-bin: [
-  "_build/install/default/bin/Ofinder"
-]

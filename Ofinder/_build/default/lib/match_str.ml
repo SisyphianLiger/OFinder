@@ -34,7 +34,7 @@ let my_match_str str_a str_b =
         | _               -> if str_b <> (String.sub str_a acc len_b)
                                 then matcher str_a str_b (acc + 1)
                                 else 
-                                    Some(acc, (acc + len_b))
+                                    Some(len_b)
     in
     matcher str_a str_b 0
 
