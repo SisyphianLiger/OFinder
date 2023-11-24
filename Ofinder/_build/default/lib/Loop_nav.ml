@@ -2,33 +2,10 @@ open Curses
 open Cli 
 open Ls
 open Match_str
-(* Take in Input 
-   u
-    From Ocaml.org docs 
-    While loops are useful with references
-    If we use a ref here that being false, 
-    we are saying while the loop is not true 
-    print_string q to quit and if we see that 
-    the string.[0] is true then we set file_loop to true 
-    setting the boolean value to the reference file_loop 
-    to true terminating the loop
-
-    Initialize an empty search string before the loop starts.
-    In your loop, take each character input from read_line ()
-    and append it to your search string.
-    Apply your algorithms to the search string inside the loop.
-    If you do this, every time a new character is inputted, 
-    the search string would get longer by one character, 
-    and the algorithms would be applied to an increasingly 
-    longer string, just as you intended.
-
-    I have a sentence and I want to ask more questions.
-
- *)
 
 
 
-(* Helper Function for sorting *)
+(* Helper Function for sorting due to None/Some *)
 let compare_ls ls_one ls_two = 
     match ls_one.ls_score, ls_two.ls_score with
     | None, None -> 0
@@ -37,19 +14,52 @@ let compare_ls ls_one ls_two =
     | Some x, Some y -> compare x y
 
 
+(*  This function takes the ls_score and subtracts 
+    both the path len because all strings show the 
+    original path, i.e. mymac/user/Desktop and subtracts
+    the ls_score is there is a string match within the 
+    string. i.e. 
+        
+    match lol 
+    str Hellol World 
+    match == -3
+ *)
 
-let sub_ls_and_str_match ls_score len_match = 
+let sub_ls_and_str_match ls_score len_match path_len = 
     match ls_score,len_match with 
     | None, None -> None 
     | None, Some _ -> None 
     | Some x, None -> Some x 
-    | Some x, Some y -> Some (x - y - 22)
+    (* 22 comes from the length of the path*)
+    | Some x, Some y -> Some (x - y - path_len)
     
 
+(*  This function makes sure that the end path is the selected 
+    path the user has made. 
+
+    index <- the top_index kept track by event loop
+    list <- the f_d_info list that is updated by the event loop
+
+ *)
 let exit_to_nvim index list = 
     let res = (List.nth index list).fd_str in
     start_path res
 
+
+
+(*
+    The main loop:
+
+        path <- The staring path found in main 
+
+    Description: 
+        Using Ncurses we create screen with two windows, one to display 
+        the output from our search on the top, and one to display our 
+        search term at the bottom. The user is able to use arrow keys 
+        to then select the search term they are looking for and upon 
+        hitting enter jump into nvim. The user may also exit using 
+        esc
+*)
 let key_test path = 
     let main_window = initscr () in
     let _ = keypad main_window true in (* Enable special keys reading *)
@@ -149,7 +159,7 @@ let key_test path =
                                                                     ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !search_term);
                                                                     
                                                                     List.iter (fun x -> x.len_match <- my_match_str x.fd_str !search_term;
-                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) !f_d_found;
+                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match (String.length path)) !f_d_found;
                                                                     
                                                                     f_d_found := List.sort compare_ls !f_d_found;
 
@@ -171,7 +181,7 @@ let key_test path =
 
                                                                     (* Output the match str *)
                                                                     List.iter (fun x -> x.len_match <- my_match_str x.fd_str !search_term;
-                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) !f_d_found;
+                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match (String.length path)) !f_d_found;
                                                                    
                                                                     f_d_found := List.sort compare_ls !f_d_found;
                                                                     

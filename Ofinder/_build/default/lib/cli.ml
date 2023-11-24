@@ -1,15 +1,12 @@
 (*  
-        In order to search through the files or directories, 
-        the following type is created.
 
-        file_or_dir: 1 if dir 0 if file 
-        fd_str : string that specifies file/dir path 
+        Record type: f_d_info
+
+        fd_str : string that specifies dir path 
         len_match : start of sub_str in fd_str * length remaining to end pos 
         ls_score : the value derived from Levenshitein algorithm (used for sort)
              
  *)
-
-
 
 type f_d_info = 
     { 
@@ -20,10 +17,22 @@ type f_d_info =
 
 
 
-(* makes cwd str *)
+(* 
+   cur_cwd 
+
+   No Parameters
+
+   Result: Wrapper function that gets a current working directory 
+*)
 let cur_cwd () = Sys.getcwd ()
 
-(* Used to change cwd *)
+(*
+    change_dir
+
+    s : MUST BE A DIR path cannot be a file 
+
+    Result: Changes directory "cd \mypath"
+ *)
 let change_dir s = Sys.chdir s
 
 
@@ -37,21 +46,38 @@ let change_dir s = Sys.chdir s
 let get_env_loc s = Sys.getenv_opt s
 
 
-let start_desktop_path () = change_dir "/Users/ryanmac/Desktop/"
 let start_path path = change_dir path
 
 
 
+(* 
+    list_of_fd
+    
+    path: a string that is used to test the path
+
+    Result: upon successful read returns an OK(dir), 
+            upon error returns an Error msg
+
+*)
 let list_of_fd path = 
     try Ok(Sys.readdir path |> Array.to_list)
     with Sys_error msg -> Error msg
 
 
 (*  
-    We use Path to change the directory if with test_path
-    Then we will recursively loop through all files with the 
-    root file name from path + the new extension
-    And store them into a string list for processing
+    find_fdl 
+
+    path : The starting point string used to search paths
+
+    Result : Returns a list of Dir paths put into the record 
+    type f_d_info, that will then be used in to populate the 
+    Event loop.
+
+    Description : We use Path to change the directory if with test_path
+    Then we will recursively loop through all files with the root file 
+    name from path + the new extension And store them into a string 
+    list for processing
+
  *)
 
 let rec find_fdl path = 

@@ -1,1 +1,1 @@
-lib/match_str.ml: Printf String
+lib/match_str.ml: String
