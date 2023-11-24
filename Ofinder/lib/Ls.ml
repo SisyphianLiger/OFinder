@@ -47,7 +47,23 @@ let rec map_calc_min m i j x_str y_str =
         ()
         
 
-(* Generates a 2D Array: With all i = 0 and j = 0 sides initialized*)
+(*  
+    make_str_matrix
+
+    x_str:  the Directory String used for comparison, 
+            must be greater in length than y_str
+
+    y_str:  The search term in the event loop, updated
+            after every new char is entered 
+
+    Result: Returns the last coordinate of the matrix, 
+            i.e. the LS_score
+
+    Description: This is the main function which uses 
+    helper functions to calculate the LS_score with 
+    2D matrix operations 
+*)
+
 let make_str_matrix x_str y_str = 
     let x_str_len = str_len (" " ^  x_str) in 
     let y_str_len = str_len (" " ^ y_str) in
