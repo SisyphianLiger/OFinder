@@ -27,9 +27,6 @@ open Match_str
  *)
 
 
-(* Letting user know if DIRECTORIES or FILES *)
-let unpacker_str x = if x = 0 then "F" else "D"
-
 
 (* Helper Function for sorting *)
 let compare_ls ls_one ls_two = 
@@ -46,7 +43,7 @@ let sub_ls_and_str_match ls_score len_match =
     | None, None -> None 
     | None, Some _ -> None 
     | Some x, None -> Some x 
-    | Some x, Some y -> Some (x - y)
+    | Some x, Some y -> Some (x - y - 22)
     
 
 let exit_to_nvim index list = 
@@ -59,7 +56,7 @@ let key_test path =
 
     let _ = path in
     (* we take this and use it to display the results *) 
-    let f_d_found = find_fdl path in
+    let f_d_found = ref (find_fdl path) in
     
     (* Needed to read text contiguously *)
     let _ = cbreak () in
@@ -74,7 +71,7 @@ let key_test path =
     box win_bot (Char.code '|') (Char.code '=');
     let _ = refresh () in
 
-    let _ = mvaddstr 1 2 "FILES OR DIRECTORIES" in
+    let _ = mvaddstr 1 2 "DIRECTORIES" in
 
     let _ = mvaddstr ((maxy * 9 / 10) - 1) 2 "SEARCH TERM BOX:" in
     let _ = mvaddstr ((maxy * 9 / 10) + 1) 3 "" in
@@ -101,8 +98,8 @@ let key_test path =
 
             | key_code when key_code = Key.up ->                    if !top_index <= input_range - 2 then top_index := !top_index + 1;
                                                                     (* Output the match str *)
-
-                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
+                                                                    
+                                                                    List.filteri (fun i _ -> i < input_range) !f_d_found |> 
                                                                     List.iteri (fun i x -> 
                                                                             ignore(mvaddstr(input_range - i + 2) 2 (  x.fd_str ^ "            "));
                                                                             if i = !top_index then 
@@ -112,13 +109,14 @@ let key_test path =
                                                                     );
                                                                     let _ = wrefresh win_top in 
                                                                     let _ = wrefresh win_bot in 
+                                                                    let _ = refresh () in
                                                                     run_loop := true
 
 
             | key_code when key_code = Key.down ->                  if !top_index > 0 then top_index := !top_index - 1;
  
 
-                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |> 
+                                                                    List.filteri (fun i _ -> i < input_range) !f_d_found |> 
                                                                     List.iteri (fun i x -> 
                                                                             ignore(mvaddstr(input_range - i + 2) 2 (x.fd_str ^ "            "));
                                                                             if i = !top_index then 
@@ -128,6 +126,7 @@ let key_test path =
                                                                     );
                                                                     let _ = wrefresh win_top in 
                                                                     let _ = wrefresh win_bot in 
+                                                                    let _ = refresh () in
                                                                     run_loop := true
 
             | key_code when key_code = escape -> 
@@ -142,27 +141,42 @@ let key_test path =
 
            | key when key = backspace  ->                         if String.length !search_term > 0 
                                                                   then 
+                                                                    let _ = wclear win_top in
+                                                                    box win_top (Char.code '|') (Char.code '=');
+                                                                    let _ = refresh () in
                                                                     search_term := String.sub !search_term 0 (String.length !search_term - 1);
                                                                     ignore(mvaddstr ((maxy * 9 / 10) + 1) 2 (String.make maxx ' '));
                                                                     ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !search_term);
                                                                     
                                                                     List.iter (fun x -> x.len_match <- my_match_str x.fd_str !search_term;
-                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) f_d_found;
+                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) !f_d_found;
+                                                                    
+                                                                    f_d_found := List.sort compare_ls !f_d_found;
+
                                                                     (* Now we sort :( *)
-                                                                    List.sort compare_ls f_d_found |> List.iteri (fun i x -> if i < input_range 
-                                                                    then ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str)));
+                                                                    List.iteri (fun i x -> if i < input_range 
+                                                                    then ignore(mvaddstr (input_range - i + 2) 2 (x.fd_str))) !f_d_found;
                                                                     let _ = wrefresh win_top in 
                                                                     let _ = wrefresh win_bot in 
+                                                                    let _ = refresh () in
                                                                     run_loop := true
 
             | _  when (String.length !search_term) < (maxx - 5) ->  search_term := !search_term  ^ Char.escaped (Char.chr ch);            
                                                                     ignore(mvaddstr ((maxy * 9 / 10) + 1) 3 !search_term); 
+
+
+                                                                    let _ = wclear win_top in
+                                                                    box win_top (Char.code '|') (Char.code '=');
+                                                                    let _ = refresh () in
+
                                                                     (* Output the match str *)
                                                                     List.iter (fun x -> x.len_match <- my_match_str x.fd_str !search_term;
-                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) f_d_found;
-                                                             
+                                                                                        x.ls_score <- sub_ls_and_str_match  (Some(make_str_matrix !search_term x.fd_str)) x.len_match) !f_d_found;
+                                                                   
+                                                                    f_d_found := List.sort compare_ls !f_d_found;
+                                                                    
                                                                     (* Now we sort *)
-                                                                    List.sort compare_ls f_d_found |> List.filteri (fun i _ -> i < input_range) |>
+                                                                    List.filteri (fun i _ -> i < input_range) !f_d_found |>
                                                                     List.iteri (fun i x -> 
                                                                         ignore(mvaddstr(input_range - i + 2) 2 (x.fd_str ^ "            "));
                                                                             if i = !top_index then 
@@ -172,11 +186,12 @@ let key_test path =
                                                                     );
                                                                     let _ = wrefresh win_top in 
                                                                     let _ = wrefresh win_bot in 
+                                                                    let _ = refresh () in
                                                                     run_loop := true
 
         | _                                             ->   run_loop := true
     done;
-    exit_to_nvim f_d_found !top_index;
+    exit_to_nvim !f_d_found !top_index;
     endwin ()
 
 

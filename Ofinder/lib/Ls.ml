@@ -6,7 +6,7 @@ let print_matrix m =
 
 
 
-                (* Levenshtein Algorithm *)
+(* Levenshtein Algorithm *)
 
 (* Getting the str length for the Algorithm *)
 let str_len str = String.length str
