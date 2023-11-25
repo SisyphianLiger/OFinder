@@ -38,3 +38,38 @@ commands:
 
 Upon Search terms for each char the List is sorted based on the 
 Levenshteins Distance Algorithm. 
+
+# Tutorial on How to Set up
+
+Make sure the following has been downloaded via opam
+## Dependencies 
+
+opam --version 2.1.5
+
+1. ocaml                --version 5.0.0
+2. dune                 --version 3.11.1
+3. base                 --version 0.16.3
+4. stdio                --version 0.16.0
+5. ppx_jane             --version 0.16.0
+7. curses               --version 1.0.11
+
+## Change the Main String Path Variable
+
+    Main Line 11
+    let path = "/Users/yourname/Desktop" in
+
+## Create a Zsh/Bash Script
+
+    #!/bin/zsh
+    dune exec Ofinder
+    cd $(cat target_dir.txt)
+    exec zsh
+
+## Set Up an Alias you zsh, bash . file i.e. /.zshrc 
+
+    # Fuzzy Finder Alias and set up
+    alias ofz='cd Your/Path/To/Dune/Ofinder && ./ofz.sh'
+    
+    Make sure chmod x+ the ofz.sh file!
+
+    
