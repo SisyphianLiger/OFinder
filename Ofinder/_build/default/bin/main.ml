@@ -11,7 +11,7 @@ let main () =
     let path = "/Users/ryanmac/Desktop" in
     let target_dir_path = tui_searcher path in
     let _ = write_to_file output_area "target_dir.txt" target_dir_path in
-    let _ = Sys.command ("nvim " ^ target_dir_path) in
+    (* let _ = Sys.command ("nvim " ^ target_dir_path) in *)
     ()
 
 let () = main ()
