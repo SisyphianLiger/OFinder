@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: /Users/ryanmac/Desktop/9.BootDev_Portfolio/Ofinder/Ofinder
 # Auto-detected concurrency: 10
-$ /Users/ryanmac/.opam/frama-c/bin/ocamlc.opt -config > /var/folders/_y/4ff11xw52zv4s0kjf9zsxnp00000gn/T/dune_52bb2c_output
+$ /Users/ryanmac/.opam/frama-c/bin/ocamlc.opt -config > /var/folders/_y/4ff11xw52zv4s0kjf9zsxnp00000gn/T/dune_5c6ecc_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -100,3 +100,5 @@ $ /Users/ryanmac/.opam/frama-c/bin/ocamlc.opt -config > /var/folders/_y/4ff11xw5
 #      }
 #  ; instrument_with = []
 #  }
+$ (cd _build/default && /Users/ryanmac/.opam/frama-c/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I /Users/ryanmac/.opam/frama-c/lib/curses -I /Users/ryanmac/.opam/frama-c/lib/ocaml/unix -I lib/.lib.objs/byte -I lib/.lib.objs/native -intf-suffix .ml -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
+$ (cd _build/default && /Users/ryanmac/.opam/frama-c/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe /Users/ryanmac/.opam/frama-c/lib/ocaml/unix/unix.cmxa /Users/ryanmac/.opam/frama-c/lib/curses/curses.cmxa -I /Users/ryanmac/.opam/frama-c/lib/curses lib/lib.cmxa bin/.main.eobjs/native/dune__exe__Main.cmx)

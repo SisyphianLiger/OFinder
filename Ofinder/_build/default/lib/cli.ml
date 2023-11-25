@@ -93,8 +93,8 @@ let rec find_fdl path =
                                     try Sys.is_directory (path ^ "/" ^ x)
                                     with Sys_error _ -> false 
                                 in
-                                let ignore_ch = String.sub x 0 1 in
-                                if is_dir && ignore_ch <> "." && ignore_ch <> "_" && x <> "node_modules" then 
+                                let ignore_ch = String.get x 0 in
+                                if is_dir && ignore_ch <> '.' && ignore_ch <> '_' && x <> "node_modules" then 
 
                                     let new_dir = find_fdl (path ^ "/" ^ x) in
                                     

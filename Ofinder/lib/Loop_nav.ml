@@ -43,7 +43,8 @@ let sub_ls_and_str_match ls_score len_match path_len =
  *)
 let exit_to_nvim index list = 
     let res = (List.nth index list).fd_str in
-    start_path res
+    start_path res;
+    res
 
 
 
@@ -60,13 +61,12 @@ let exit_to_nvim index list =
         hitting enter jump into nvim. The user may also exit using 
         esc
 *)
-let key_test path = 
+let tui_searcher path = 
     let main_window = initscr () in
     let _ = keypad main_window true in (* Enable special keys reading *)
 
     let _ = path in
-    (* we take this and use it to display the results *) 
-    let f_d_found = ref (find_fdl path) in
+    (* we take this and use it to display the results *) let f_d_found = ref (find_fdl path) in
     
     (* Needed to read text contiguously *)
     let _ = cbreak () in
@@ -201,8 +201,8 @@ let key_test path =
 
         | _                                             ->   run_loop := true
     done;
-    exit_to_nvim !f_d_found !top_index;
-    endwin ()
+    endwin ();
+    exit_to_nvim !f_d_found !top_index
 
 
 
